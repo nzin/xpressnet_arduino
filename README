@@ -2,7 +2,8 @@
 Introduction
 =============
 This is a basic xpressnet arduino implementation.
-My goal was to create my own switch remote controller, so it implements only wht I was looking for, but it is very easy to add features.
+My goal was to create my own switch remote controller, so it implements only what I was looking for, but it is very easy to add features.
+There is video (in french) of what I'm trying to do at http://youtu.be/JcD7iC3VbOw
 
 Arduino Mega
 ============
@@ -16,6 +17,15 @@ You will need a Max485cpa chip, and pay attention to the wiring image provided. 
 Code
 ====
 When everything is in place, you can use the code. Mine currently is used to switch every 2 seconds a turnout (its id on my lockmauss is 38, and in the code, it is 37, because human counts from 1.. and computer begins to count from 0)
+The "architecture" is the following:
+- decodeXpressnet will read on a serial device data coming from xpressnet (via rs485), and will use decodeStage2 to decode data payload.
+- if it is a "normal inquiry" message, poolEvent() will be called.
+- poolEvent will check the XpressCommand stack state. If there is something, it will pop up one XpressCommand from the stack and send it.
+- in your other part of the code, when you want to emit a command, you need to
+ * create it: XpressCommand c = new XpressCommand()
+ * populate it : c->pushData(0x21); c->pushData(0x81);
+ * put it on the queue: XpressCommand::pushStackCommand(stack,c);
+
 
 
 Hope it can help!
