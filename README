@@ -1,0 +1,24 @@
+
+Introduction
+=============
+This is a basic xpressnet arduino implementation.
+My goal was to create my own switch remote controller, so it implements only wht I was looking for, but it is very easy to add features.
+
+Arduino Mega
+============
+You need an Arduino Mega 2560. Why? because xpressnet is a 9bit serial protocol. Standard Arduino SDK don't provide 9bits. But someone reimplement a 9bit Serial library.
+So you need to take HardwareSerial.h and HardwareSerial.cpp and replace these in the Arduino SDK (in /hardware/arduino/avr/cores/arduino/)
+
+Wiring
+======
+You will need a Max485cpa chip, and pay attention to the wiring image provided. I'm a bit confused on the RJ12 where is the GND and where is the VCC.
+
+Code
+====
+When everything is in place, you can use the code. Mine currently is used to switch every 2 seconds a turnout (its id on my lockmauss is 38, and in the code, it is 37, because human counts from 1.. and computer begins to count from 0)
+
+
+Hope it can help!
+
+
+Nicolas Zin (nicolas.zin@gmail.com)
