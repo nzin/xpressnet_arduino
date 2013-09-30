@@ -7,8 +7,8 @@ There is video (in french) of what I'm trying to do at http://youtu.be/JcD7iC3Vb
 
 Arduino Mega
 ============
-You need an Arduino Mega 2560. Why? because xpressnet is a 9bit serial protocol. Standard Arduino SDK don't provide 9bits. But someone reimplement a 9bit Serial library.
-So you need to take HardwareSerial.h and HardwareSerial.cpp and replace these in the Arduino SDK (in /hardware/arduino/avr/cores/arduino/)
+You need an Arduino Mega 2560. Why? because xpressnet is a 9bit serial protocol. Standard Arduino SDK don't provide 9bits. But someone reimplement a 9bit Serial library (I put it into the arduinoSdk directory).
+So you need to take HardwareSerial.h and HardwareSerial.cpp and replace these in the Arduino SDK (in /hardware/arduino/avr/cores/arduino/), and of course select Arduino 2560 in the Arduino IDE (in Tools/Board)
 
 Wiring
 ======

@@ -9,10 +9,10 @@ void sendSwitchCommand(int address,int up, int activate);
 /********************* TCO state *******************/
 // pin id, turnout id, isLeftOn1, currentState
 int button[][4]={
-  {10, 37, LOW, LOW},
-  {11, 38, HIGH,LOW},
-  {12, 12, HIGH,LOW},
-  {13, 40, LOW, LOW},
+  {31, 37, LOW, LOW},
+  {32, 38, HIGH,LOW},
+  {33, 12, HIGH,LOW},
+  {34, 40, LOW, LOW},
 };
 
 void initiateTCOState() {
@@ -48,7 +48,7 @@ void checkTCOState() {
 
 /********************* xpressnet state machine *******************/
 #define MYADDRESS 4
-#define GIO_RXTX 52 //38
+#define GIO_RXTX 7
 
 // first stage decoding
 #define OPERATION_NONE 0
