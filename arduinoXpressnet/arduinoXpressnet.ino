@@ -7,7 +7,7 @@
 
 void sendSwitchCommand(int address,int up, int activate);
 /********************* TCO state *******************/
-// pin id, turnout id, isLeftOn1, currentState
+// pin id, turnout id, isLeftOn1 (i.e. reverse the command state), currentState
 int button[][4]={
   {31, 37, LOW, LOW},
   {32, 38, HIGH,LOW},
@@ -31,10 +31,14 @@ void initiateTCOState() {
 
 void checkTCOState() {
   int state;
-  for (int i=0;i<sizeof(button)/(3*sizeof(int));i++) {
+  for (int i=0;i<sizeof(button)/(4*sizeof(int));i++) {
     state=digitalRead(button[i][0]);
     // state changed
     if (state!=button[i][3]) {
+      Serial.print("state (");
+      Serial.print(state);
+      Serial.print(") changed for button");
+      Serial.println(button[i][1]);
       if (state==button[i][2]) {
         sendSwitchCommand(button[i][1],0,1);
         sendSwitchCommand(button[i][1],0,0);
@@ -42,6 +46,7 @@ void checkTCOState() {
         sendSwitchCommand(button[i][1],1,1);
         sendSwitchCommand(button[i][1],1,0);
       }
+      button[i][3]=state;
     }
   }
 }
@@ -51,6 +56,7 @@ void checkTCOState() {
 #define GIO_RXTX 7
 
 // first stage decoding
+#define OPERATION_RESYNC -1
 #define OPERATION_NONE 0
 #define OPERATION_NORMAL_INQUIRY 1
 #define OPERATION_REQUEST_ACKNOWLEDGEbMENT 2
@@ -300,6 +306,19 @@ void poolEvent() {
 int decodeXpressnet(int data) {
   int address;
   
+  // after a XOR problem
+  if (currentOperation==OPERATION_RESYNC) {
+    address=data&0x1f;
+    if ( ! (((data & 0x60) == 0x40) && (address==MYADDRESS))) { // P10AAAAA
+      Serial.print("state=");
+      Serial.print(currentOperation);
+      Serial.print(" data=");
+      Serial.println(data,HEX);
+      return FALSE;
+    }
+    currentOperation=OPERATION_NONE;
+  }
+  
   // other xpress device?
   if (data<=255 && currentOperation==OPERATION_NONE) {
     Serial.println();
@@ -372,6 +391,9 @@ int decodeXpressnet(int data) {
     } else { //XOR
       if (xorCheck!=(data&0xff)) {
         Serial.println("incorrect XOR byte");
+        currentOperation=OPERATION_RESYNC;
+        dataPosition=-1;
+        return FALSE;
       }
       //treat
       Serial.print("header=");

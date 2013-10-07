@@ -34,7 +34,7 @@ void XpressCommand::writeData(int commandPin,HardwareSerial&serial) {
   
   // wait flush
   delayMicroseconds(220*(_position+1));
-  
+   
   digitalWrite(commandPin,LOW);
   
   if (_debug) {
@@ -49,11 +49,16 @@ void XpressCommand::writeData(int commandPin,HardwareSerial&serial) {
 
  
 void XpressCommand::pushStackCommand(XpressCommand *&link, XpressCommand *newCommand) {
+  int count=0;
   if (link==NULL) {
     link=newCommand;
     return;
   }
   while (link->_next!=NULL) {
+    count++;
+    if (count>100) {
+      // drop it, we have too much commands!
+    }
     link=link->_next;
   }
   link->_next=newCommand;
